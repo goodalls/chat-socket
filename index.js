@@ -22,7 +22,7 @@ io.on('connection', (socket)=>{
 
   socket.on('typing', (message) => {
     console.log(message);
-    io.emit('typing', message);
+    socket.broadcast.emit('typing', message);
   })
 
 });
