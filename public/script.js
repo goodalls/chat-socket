@@ -1,17 +1,20 @@
+const socket = io();
 
-    $(function () {
-      var socket = io();
-      $('form').submit(function () {
-        socket.emit('chat message', $('#m').val());
-        $('#m').val('');
-        return false;
-      });
-      socket.on('chat message', function (msg) {
-        $('#messages').append($('<li>').text(msg));
-      });
-    });
+$('form').submit(() => {
+  socket.emit('chat message', $('#m').val());
+  $('#m').val('');
+  return false;
+});
+socket.on('chat message', msg => {
+  $('#messages').append($('<li>').text(msg));
+});
 
-    $(document).on('keyup', function() {
-      
-      
-    })
+$('#m').on('keyup', () => {
+  if($('#messages').find('li').last().text() !== 'User is Typing Something Cool!') {
+    socket.emit('typing', 'User is Typing Something Cool!')
+  }
+});
+
+socket.on('typing', message => {
+  $('#messages').append($('<li>').text(message));
+});

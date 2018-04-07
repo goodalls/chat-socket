@@ -1,21 +1,32 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+const express = require('express');
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/public/index.html');
+app.use(express.static('public'));
+
+app.get('/', function(request, response){
+  response.sendFile(__dirname + '/public/index.html');
 });
 
-io.on('connection', function(socket){
+io.on('connection', (socket)=>{
   console.log('a user connected');
-  socket.on('disconnect', function(){
+
+  socket.on('disconnect', ()=>{
     console.log('user disconnected');
   });
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
+
+  socket.on('chat message', (message) => {
+    io.emit('chat message', message);
   });
+
+  socket.on('typing', (message) => {
+    console.log(message);
+    io.emit('typing', message);
+  })
+
 });
 
-http.listen(3000, function(){
+http.listen(3000, ()=>{
   console.log('listening on *:3000');
 });
